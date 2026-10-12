@@ -69,7 +69,19 @@ TEMPLATES = [{
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
+# Configure persistent storage directory for Render
+# If RENDER_EXTERNAL_HOSTNAME exists, we are live on Render; use the mounted persistent disk folder.
+if os.environ.get("RENDER_EXTERNAL_HOSTNAME"):
+    DATA_DIR = Path("/data")
+else:
+    DATA_DIR = BASE_DIR
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": DATA_DIR / "db.sqlite3",
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -85,8 +97,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Media uploads are routed to the persistent disk on Render to survive service restarts
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = DATA_DIR / "media"
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
