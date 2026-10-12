@@ -2,14 +2,10 @@
 # Exit immediately if a command exits with a non-zero status
 set -o errexit
 
-# Install dependencies
+# 1. Install dependencies
 pip install -r requirements.txt
 
-# Collect static files into staticfiles/ for WhiteNoise
+# 2. Collect static files
 python manage.py collectstatic --noinput
 
-# Run database migrations
-python manage.py migrate
-
-# Seed starter content if database tables are empty
-python manage.py seed --content
+# Ensure NO database commands are down here!
