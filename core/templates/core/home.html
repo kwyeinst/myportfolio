@@ -1,0 +1,151 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kwadwo Yeboah Adusei — Software & Quality Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="{% static 'core/style.css' %}">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+<div class="wrap">
+<nav><b>Kwadwo Yeboah Adusei</b><div>{% if profile and profile.about %}<a href="#about">About</a>{% endif %}<a href="#work">Work</a><a href="#progress">Progress</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#contact">Contact</a>{% if profile and profile.resume %}<a href="{{ profile.resume.url }}" download="Kwadwo_Yeboah_Adusei_Resume.pdf" target="_blank" class="nav-resume">Resume ⤓</a>{% endif %}<button type="button" id="theme-toggle" aria-label="Switch colour theme">Dark mode</button></div></nav>
+
+<header class="hero">
+<div>
+{% if profile and profile.photo %}<img class="portrait" src="{{ profile.photo.url }}" alt="Portrait of Kwadwo Yeboah Adusei" width="112" height="112">{% endif %}
+<h1>I engineer high-reliability systems and the automated test platforms that keep them unbreakable.</h1>
+<p class="lede">Software &amp; QA Automation Engineer in Ghana. I architect test automation platforms across 12+ live fintech products, build resilient backend services, and leverage AI/MCP workflows to accelerate reliability.</p>
+<div class="btns">
+<a class="btn main" href="#work">See my work</a>
+{% if profile and profile.resume %}
+<a class="btn resume-btn" href="{{ profile.resume.url }}" download="Kwadwo_Yeboah_Adusei_Resume.pdf" target="_blank">Download Resume <span class="arrow" aria-hidden="true">⤓</span></a>
+{% else %}
+<a class="btn resume-btn" href="#contact">Request Resume <span class="arrow" aria-hidden="true">📄</span></a>
+{% endif %}
+<a class="btn" href="#contact">Get in touch</a>
+</div>
+</div>
+<div class="report" aria-label="Test report summarising what I do">
+<div class="head" id="report-head">$ <span id="report-cmd">npx playwright test --project=kwadwo</span></div>
+<ul id="report-rows">
+<li class="ok"><i></i>owns test strategy for 12+ fintech products</li>
+<li class="ok"><i></i>architects queue-based test runners (NestJS, BullMQ)</li>
+<li class="ok"><i></i>builds full-stack APIs with PostgreSQL &amp; Docker</li>
+<li class="ok"><i></i>reports security flaws before attackers find them</li>
+<li class="ok" data-flaky><i></i>traces flaky failures with Claude &amp; MCP<span class="retry">&nbsp;(retry 1)</span></li>
+<li class="ok"><i></i>ensures zero regressions ship to production</li>
+</ul>
+<div class="sum" id="report-sum">6 passed (1 flaky)</div>
+</div>
+</header>
+
+{% if profile and profile.about %}<section id="about">
+<h2>About me</h2>
+<div class="about">{{ profile.about|linebreaks }}</div>
+</section>
+
+{% endif %}<section id="work">
+<div class="section-head">
+<h2>Selected work</h2>
+<div class="filter-bar" role="toolbar" aria-label="Filter projects by domain">
+<button type="button" class="filter-pill active" data-filter="all" aria-pressed="true">All</button>
+<button type="button" class="filter-pill" data-filter="qa" aria-pressed="false">QA &amp; Automation</button>
+<button type="button" class="filter-pill" data-filter="swe" aria-pressed="false">Software Engineering</button>
+<button type="button" class="filter-pill" data-filter="ai" aria-pressed="false">AI &amp; Systems</button>
+</div>
+</div>
+<div class="rows" id="project-rows">
+{% for p in projects %}
+<article class="row" data-category="{{ p.category }}">
+<div>
+<h3>{{ p.title }}</h3>
+<div class="meta-tags">
+<span class="cat-pill cat-{{ p.category }}">{{ p.get_category_display }}</span>
+{% if p.tech %}<span class="tag">{{ p.tech }}</span>{% endif %}
+</div>
+</div>
+<div>
+<p>{{ p.summary }}</p>
+{% if p.repo_url or p.live_url %}
+<div class="links">
+{% if p.repo_url %}<a href="{{ p.repo_url }}" target="_blank" rel="noopener noreferrer" class="link-btn">Code</a>{% endif %}
+{% if p.live_url %}<a href="{{ p.live_url }}" target="_blank" rel="noopener noreferrer" class="link-btn">Live demo</a>{% endif %}
+</div>
+{% else %}
+<div class="links"><span class="link-badge">Production system</span></div>
+{% endif %}
+</div>
+</article>
+{% empty %}
+<p class="empty">No projects yet.</p>
+{% endfor %}
+</div>
+</section>
+
+<section id="progress">
+<h2>Achievements and progress</h2>
+<div class="rows">
+{% for a in achievements %}
+<article class="row">
+<div><h3>{% if a.year_only %}{{ a.date|date:"Y" }}{% else %}{{ a.date|date:"M Y" }}{% endif %}</h3></div>
+<div>
+<p><strong>{{ a.title }}</strong></p>
+{% if a.description %}<p>{{ a.description }}</p>{% endif %}
+{% if a.link %}<p class="links"><a href="{{ a.link }}" rel="noopener">View</a></p>{% endif %}
+</div>
+</article>
+{% empty %}
+<p class="empty">Nothing here yet.</p>
+{% endfor %}
+</div>
+</section>
+
+<section id="experience">
+<h2>Experience</h2>
+<div class="rows">
+{% for exp in experiences %}
+<article class="row">
+<div>
+<h3>{{ exp.title }}</h3>
+{% if exp.period or exp.organization %}<span class="tag">{% if exp.period %}{{ exp.period }}{% endif %}{% if exp.period and exp.organization %}, {% endif %}{{ exp.organization }}</span>{% endif %}
+</div>
+<div>
+{% if exp.description %}<p>{{ exp.description }}</p>{% endif %}
+{% if exp.bullet_list %}
+<ul>
+{% for b in exp.bullet_list %}
+<li>{{ b }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+</article>
+{% empty %}
+<p class="empty">No experience listed yet.</p>
+{% endfor %}
+</div>
+</section>
+
+<section id="skills">
+<h2>Skills</h2>
+<div class="skills">
+<div><h3>Test &amp; Quality Engineering</h3><p>Playwright, Selenium, Postman, REST &amp; WebSocket testing, test strategy, regression and exploratory QA.</p></div>
+<div><h3>Software &amp; Systems Engineering</h3><p>Node.js, NestJS, Python, Django, PostgreSQL, Prisma, BullMQ, Redis, Docker, Git.</p></div>
+<div><h3>Applied AI &amp; Intelligent Tooling</h3><p>Anthropic Model Context Protocol (MCP), Claude Code, LLMs, RAG, prompt engineering, root-cause failure triage.</p></div>
+<div><h3>Security &amp; Observability</h3><p>Vulnerability assessment, session hijacking prevention, OWASP, Datadog, performance benchmarking.</p></div>
+</div>
+</section>
+
+<footer id="contact">
+<h2>Contact</h2>
+<p>Need reliable automated tests, high-performance backend systems, or a custom test platform? Send me a message.</p>
+<p><a href="mailto:aduseikay8096@gmail.com">aduseikay8096@gmail.com</a>{% if profile and profile.resume %} &nbsp; <a href="{{ profile.resume.url }}" download="Kwadwo_Yeboah_Adusei_Resume.pdf" target="_blank">Resume (PDF) ⤓</a>{% endif %} &nbsp; <a href="https://github.com/DevMorph77">GitHub</a> &nbsp; <a href="https://linkedin.com/in/aduseikay8096">LinkedIn</a></p>
+</footer>
+</div>
+<script src="{% static 'core/main.js' %}"></script>
+</body>
+</html>
