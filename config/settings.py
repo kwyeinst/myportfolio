@@ -70,11 +70,14 @@ TEMPLATES = [{
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Configure persistent storage directory for Render
-# If RENDER_EXTERNAL_HOSTNAME exists, we are live on Render; use the mounted persistent disk folder.
-if os.environ.get("RENDER_EXTERNAL_HOSTNAME"):
+# Check if running on Render AND if the root/data paths are actually writable (only true at runtime)
+if os.environ.get("RENDER_EXTERNAL_HOSTNAME") and os.access("/", os.W_OK):
     DATA_DIR = Path("/data")
-    # Explicitly ensure the directory pathway exists on the host disk to prevent SQLite tracebacks
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        # Emergency fallback to base directory if runtime directory creation fails
+        DATA_DIR = BASE_DIR
 else:
     DATA_DIR = BASE_DIR
 
